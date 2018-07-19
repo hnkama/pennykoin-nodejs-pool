@@ -7,7 +7,7 @@
 /**
  * Layout
  **/
- 
+
 // Collapse menu on load for mobile devices
 $('#menu-content').collapse('hide');
 
@@ -73,10 +73,10 @@ function routePage(loadedCallback) {
 
     $('.hot_link').parent().removeClass('active');
     var $link = $('a.hot_link[href="' + (window.location.hash || '#') + '"]');
-    
+
     $link.parent().addClass('active');
     var page = $link.data('page');
-    
+
     loadTranslations();
 
     xhrPageLoading = $.ajax({
@@ -96,7 +96,7 @@ function routePage(loadedCallback) {
 /**
  * Strings
  **/
- 
+
 // Add .update() custom jQuery function to update text content
 $.fn.update = function(txt){
     var el = this[0];
@@ -211,7 +211,7 @@ function getReadableHashRateString(hashrate){
     }
     return parseFloat(hashrate).toFixed(2) + byteUnits[i];
 }
-    
+
 // Get coin decimal places
 function getCoinDecimalPlaces() {
     if (typeof coinDecimalPlaces != "undefined") return coinDecimalPlaces;
@@ -227,8 +227,14 @@ function getReadableCoins(coins, digits, withoutSymbol){
 }
 
 // Format payment link
+//Code modified for cases when config.transactionExplorer is null. @daHIFI
 function formatPaymentLink(hash){
-    return '<a target="_blank" href="' + getTransactionUrl(hash) + '">' + hash + '</a>';
+    if (transactionExplorer == '') {
+      return hash
+    }
+     else {
+       return '<a target="_blank" href="' + getTransactionUrl(hash) + '">' + hash + '</a>';
+     }
 }
 
 // Format difficulty
@@ -250,7 +256,7 @@ function formatLuck(difficulty, shares) {
     }
     else{
         return '<span class="luckBad">' + percent + '%</span>';
-    }    
+    }
 }
 
 /**
@@ -271,13 +277,13 @@ function getTransactionUrl(id) {
 
 // Return blockchain explorer URL
 function getBlockchainUrl(id) {
-    return blockchainExplorer.replace(new RegExp('{symbol}', 'g'), lastStats.config.symbol.toLowerCase()).replace(new RegExp('{id}', 'g'), id);    
+    return blockchainExplorer.replace(new RegExp('{symbol}', 'g'), lastStats.config.symbol.toLowerCase()).replace(new RegExp('{id}', 'g'), id);
 }
- 
+
 /**
  * Tables
  **/
- 
+
 // Sort table cells
 function sortTable() {
     var table = $(this).parents('table').eq(0),
@@ -319,11 +325,11 @@ if (typeof defaultLang == "undefined") {
 }
 
 var langCode = defaultLang;
-var langData = null; 
+var langData = null;
 
 function getTranslation(key) {
     if (!langData || !langData[key]) return null;
-    return langData[key];    
+    return langData[key];
 }
 
 var translate = function(data) {
@@ -343,7 +349,7 @@ var translate = function(data) {
         var strTr = data[$(this).attr('tvalue')];
         $(this).attr('value', strTr)
     });
-} 
+}
 
 // Get language code from URL
 const $_GET = {};
@@ -352,7 +358,7 @@ for (var i=0; i<args.length; ++i) {
     const tmp = args[i].split(/=/);
     if (tmp[0] != "") {
         $_GET[decodeURIComponent(tmp[0])] = decodeURIComponent(tmp.slice(1).join("").replace("+", " "));
-        var langCode = $_GET['lang'];    
+        var langCode = $_GET['lang'];
     }
 }
 
@@ -363,10 +369,10 @@ function loadTranslations() {
     }
     else if (langs && langs[langCode]) {
         $.getJSON('lang/'+langCode+'.json', translate);
-        $.getScript('lang/timeago/jquery.timeago.'+langCode+'.js');    
+        $.getScript('lang/timeago/jquery.timeago.'+langCode+'.js');
     } else {
         $.getJSON('lang/'+defaultLang+'.json', translate);
-        $.getScript('lang/timeago/jquery.timeago.'+defaultLang+'.js');    
+        $.getScript('lang/timeago/jquery.timeago.'+defaultLang+'.js');
     }
 }
 
@@ -385,7 +391,7 @@ function renderLangSelector() {
 	html += '</select>';
     }
     if (html && numLangs > 1) {
-        $('#langSelector').html(html);	
+        $('#langSelector').html(html);
         $('#newLang').each(function(){
             $(this).change(function() {
                 var newLang = $(this).val();
@@ -394,7 +400,7 @@ function renderLangSelector() {
                 window.location.href = url;
             });
         });
-    }	
+    }
 
     // Mobile
     var html = '';
@@ -409,7 +415,7 @@ function renderLangSelector() {
 	html += '</select>';
     }
     if (html && numLangs > 1) {
-        $('#mLangSelector').html(html);	
+        $('#mLangSelector').html(html);
         $('#mNewLang').each(function(){
             $(this).change(function() {
                 var newLang = $(this).val();
@@ -418,5 +424,5 @@ function renderLangSelector() {
                 window.location.href = url;
             });
         });
-    }	
+    }
 }
